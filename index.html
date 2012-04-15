@@ -11,33 +11,50 @@
             var groups = {}
  
             function create_groups(data){
-               var groups = {};
+                var groups = {};
+                var all_carts = 0;
                 $.each(data, function(cart_id, value){
                     var group = value['group'];
                     if (!(group in groups)){
                         groups[group] = [];
                     }; 
                     groups[group].push(cart_id);
+                    all_carts ++;
                 });
+                groups['all'] = all_carts;
                 return groups;
              }
 
+            function check_all_groups(){
+                items = $("input","ul#fami_tags li");
+                checked = items[0].checked;
+                $.each(items, function(idx, val){
+                    if (idx > 0) {
+                        val.checked = checked;
+                    }
+                });
+                return true;
+            }
 
             function create_group_checkboxes(groups){
                 inputs = $("ul#fami_tags");
                 inputs.empty();
                 $.each(groups, function(group, value){
                     listItem = document.createElement("li");
-                    labelItem = document.createElement("label");
                     inputItem = document.createElement("input");
-                    labeltext = document.createTextNode(group + ' ('+ value.length + ');');
                     inputItem.type = "checkbox";
                     inputItem.name = group;
                     inputItem.value = group;
-                    labelItem.appendChild(inputItem);
-                    labelItem.appendChild(labeltext);
-                    listItem.appendChild(labelItem); 
-                    inputs.append(listItem);
+                    listItem.appendChild(inputItem);
+                    if (group == 'all'){
+                        labeltext = document.createTextNode(group + ' ('+ value + '):');
+                        inputItem.onchange = check_all_groups;
+                        inputs.prepend(listItem);
+                    } else {
+                        labeltext = document.createTextNode(group + ' ('+ value.length + ');');
+                        inputs.append(listItem);
+                    }
+                    listItem.appendChild(labeltext);
                 });
             }
 
@@ -54,10 +71,6 @@
 
         <div>
             <ul id="fami_tags">
-                <li> <input type="checkbox" name="transport" value="all" checked="checked" /> all:</li>
-                <li> <input type="checkbox" name="transport" value="train" /> konami </li>
-                <li> <input type="checkbox" name="transport" value="car" /> capcom </li>
-                <li> <input type="checkbox" name="transport" value="bus" /> nintendo </li>
             </ul>
         </div>
 
