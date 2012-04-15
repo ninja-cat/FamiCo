@@ -11,6 +11,10 @@
             var groups = {};
             var carts = {}; 
 
+            function sort_asc(a, b){
+                return ($(b).text().toUpperCase()) < ($(a).text().toUpperCase());
+            }
+
             function create_groups(data){
                 var groups = {};
                 var all_carts = 0;
@@ -61,6 +65,7 @@
                     }
                 });
                 $("#cart_selector").change(show_selected);
+                $('select option').sort(sort_asc).appendTo('select');
             }
 
             function check_all_groups(){
