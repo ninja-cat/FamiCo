@@ -13,12 +13,12 @@ db = {}
 id = get_id()
 cart = {}
 
-cart["s_name"] = "contra"
-cart["o_name"] = "魂斗羅"
-cart["e_name"] = "contra"
+cart["short_title"] = "contra"
+cart["original_title"] = "魂斗羅"
+cart["english_title"] = "contra"
 cart["group"] = "konami"
-cart["ts"] = str(datetime.now().isoformat())
-cart["cat"] = "RC826"
+cart["timestamp"] = str(datetime.now().isoformat())
+cart["catalog_id"] = "RC826"
 cart["img"] = ""
 
 db[id] = cart
@@ -26,12 +26,12 @@ db[id] = cart
 id = get_id()
 cart = {}
 
-cart["s_name"] = "super contra"
-cart["o_name"] = "Super 魂斗羅"
-cart["e_name"] = "super contra"
+cart["short_title"] = "super contra"
+cart["original_title"] = "Super 魂斗羅"
+cart["english_title"] = "super contra"
 cart["group"] = "konami"
-cart["ts"] = str(datetime.now().isoformat())
-cart["cat"] = "KDS-UE"
+cart["timestamp"] = str(datetime.now().isoformat())
+cart["catalog_id"] = "KDS-UE"
 cart["img"] = ""
 
 db[id] = cart
@@ -39,12 +39,12 @@ db[id] = cart
 id = get_id()
 cart = {}
 
-cart["s_name"] = "dead fox"
-cart["o_name"] = "デッドフォックス"
-cart["e_name"] = "dead fox"
+cart["short_title"] = "dead fox"
+cart["original_title"] = "デッドフォックス"
+cart["english_title"] = "dead fox"
 cart["group"] = "capcom"
-cart["ts"] = str(datetime.now().isoformat())
-cart["cat"] = "CAP-VP"
+cart["timestamp"] = str(datetime.now().isoformat())
+cart["catalog_id"] = "CAP-VP"
 cart["img"] = ""
 
 db[id] = cart
@@ -52,12 +52,12 @@ db[id] = cart
 id = get_id()
 cart = {}
 
-cart["s_name"] = "pizza pop!"
-cart["o_name"] = "ピザポップ"
-cart["e_name"] = "pizza pop!"
+cart["short_title"] = "pizza pop!"
+cart["original_title"] = "ピザポップ"
+cart["english_title"] = "pizza pop!"
 cart["group"] = "jaleco"
-cart["ts"] = str(datetime.now().isoformat())
-cart["cat"] = "JF-35"
+cart["timestamp"] = str(datetime.now().isoformat())
+cart["catalog_id"] = "JF-35"
 cart["img"] = ""
 
 db[id] = cart
