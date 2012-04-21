@@ -30,10 +30,6 @@
                 return groups;
              }
 
-            function clean_cart_list(){
-                $("#cart_selector").empty();
-            }
-            
             function show_selected(){
                 var selected_options = $("#cart_selector option:selected");
                 var info_list = $("ul#shock_content").empty();
@@ -48,34 +44,24 @@
                 });
             }            
 
-            function add_group_to_list(group){
-                $.each(groups[group], function(idx, cart_id){
-                    $('#cart_selector').append($("<option/>", {
-                        value: cart_id,
-                        text: carts[cart_id]["short_title"]
-                    }));
-                });
-            }
-
             function create_list_from_checked_groups(){
-                clean_cart_list();
-                var items = $("input","ul#fami_tags li");
-                $.each(items, function(idx, val){
-                    if (idx > 0 && val.checked){
-                            add_group_to_list(val.name);
+                var cart_list = $("#cart_selector").empty();
+                var items = $("input:checked","ul#fami_tags li");
+                $.each(items, function(idx, group){
+                    if (group.name != 'all'){
+                        $.each(groups[group.name], function(idx, cart_id){
+                            cart_list.append($("<option/>", {
+                                value: cart_id,
+                                text: carts[cart_id]["short_title"]
+                            }));
+                        });
                     }
                 });
-                $("#cart_selector").change(show_selected);
                 $('select option').sort(sort_asc).appendTo('select');
             }
 
             function check_all_groups(){
-                clean_cart_list();
-                var items = $("input","ul#fami_tags li");
-                var checked = items[0].checked;
-                $.each(items, function(idx, val){
-                        val.checked = checked;
-                });
+                $("input","ul#fami_tags li").attr('checked',this.checked);
                 create_list_from_checked_groups();
             }
 
@@ -107,11 +93,12 @@
                     carts = data;
                     groups = create_groups(data);
                     create_group_checkboxes(groups);  
-                    clean_cart_list(); 
+                    $("#cart_selector").change(show_selected);
                 });
             }
 
-            load_cart_db();
+            $(document).ready(load_cart_db);
+
         </script>
 
         <div>
