@@ -36,14 +36,15 @@
             
             function show_selected(){
                 var selected_options = $("#cart_selector option:selected");
+                var info_list = $("ul#shock_content").empty();
                 $.each(selected_options, function(idx, cart_id){
-                    info_list = $("ul#shock_content").empty();
                     $.each(carts[cart_id.value], function(key, value){
-                        listItem = document.createElement("li");
-                        text = document.createTextNode(key + ": " + value);
+                        var listItem = document.createElement("li");
+                        var text = document.createTextNode(key + ": " + value);
                         listItem.appendChild(text);
                         info_list.append(listItem);
                     });
+                    info_list.append(document.createElement("hr"));
                 });
             }            
 
@@ -58,7 +59,7 @@
 
             function create_list_from_checked_groups(){
                 clean_cart_list();
-                items = $("input","ul#fami_tags li");
+                var items = $("input","ul#fami_tags li");
                 $.each(items, function(idx, val){
                     if (idx > 0 && val.checked){
                             add_group_to_list(val.name);
@@ -70,8 +71,8 @@
 
             function check_all_groups(){
                 clean_cart_list();
-                items = $("input","ul#fami_tags li");
-                checked = items[0].checked;
+                var items = $("input","ul#fami_tags li");
+                var checked = items[0].checked;
                 $.each(items, function(idx, val){
                         val.checked = checked;
                 });
@@ -79,21 +80,20 @@
             }
 
             function create_group_checkboxes(groups){
-                inputs = $("ul#fami_tags");
-                inputs.empty();
-                $.each(groups, function(group, value){
-                    listItem = document.createElement("li");
-                    inputItem = document.createElement("input");
+                var inputs = $("ul#fami_tags").empty();
+                $.each(Object.keys(groups).sort(), function(idx, group){
+                    var listItem = document.createElement("li");
+                    var inputItem = document.createElement("input");
                     inputItem.type = "checkbox";
                     inputItem.name = group;
                     inputItem.value = group;
                     listItem.appendChild(inputItem);
                     if (group == 'all'){
-                        labeltext = document.createTextNode(group + ' ('+ value + '):');
+                        var labeltext = document.createTextNode(group + ' ('+ groups[group] + '):');
                         inputItem.onchange = check_all_groups;
                         inputs.prepend(listItem);
                     } else {
-                        labeltext = document.createTextNode(group + ' ('+ value.length + ');');
+                        var labeltext = document.createTextNode(group + ' ('+ groups[group].length + ');');
                         inputItem.onchange = create_list_from_checked_groups; 
                         inputs.append(listItem);
                     }
@@ -125,7 +125,7 @@
             <tr>
                 <td style="vertical-align: top;">
                     <div id="cart_list" >
-                        <select id="cart_selector" name="carts" size="25">
+                        <select id="cart_selector" multiple name="carts" size="25">
                         </select>
                     </div>
                 </td>
