@@ -55,7 +55,7 @@
                 });
                 $('select option').sort(
                     function (a, b) {
-                        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;            
+                        return a.text.toUpperCase() == b.text.toUpperCase() ? 0 : a.text.toUpperCase() < b.text.toUpperCase() ? -1 : 1;
                     }).appendTo('select');
             }
 
