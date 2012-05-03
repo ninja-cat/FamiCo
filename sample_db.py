@@ -12,11 +12,10 @@ import lxml.html
 
 
 def get_profile_id_at_bootgoddb(cart_id):
-    url_path = "http://bootgod.dyndns.org:7777/search.php?"
-    f = urllib.urlopen(url_path + urllib.urlencode({"keywords": cart_id, "kwtype": "game"}))
-    html = f.read().replace('\n','').replace('\r','')
+    
+    f = urllib.urlopen("http://bootgod.dyndns.org:7777/search.php?" + urllib.urlencode({"kwtype": 'game', "keywords": cart_id})).read()
 
-    m = re.match(".*(setTimeout\(\'window\.location=\"profile.php\?id=)(?P<profile_id>\d+)", html)
+    m = re.search("(?<=setTimeout\(\'window\.location=\"profile.php\?id=)(?P<profile_id>\d+)", f, re.MULTILINE)
     if not m:
         return None
     else:
@@ -24,30 +23,20 @@ def get_profile_id_at_bootgoddb(cart_id):
 
 
 def get_all_info_from_profile(profile_id):
-    f = urllib.urlopen("http://bootgod.dyndns.org:7777/profile.php?id=" + profile_id)
-    cart_html = f.read().replace('\n','').replace('\r','').replace('\t','')
-    for x in range(0, cart_html.count("<table >")):
-        cart_html = cart_html.replace("<table >", "<table id=tid_%d" % (x + 1), 1)
+    f = urllib.urlopen("http://bootgod.dyndns.org:7777/profile.php?" + urllib.urlencode({"id": profile_id})).read()
 
-    doc = lxml.html.document_fromstring(cart_html)
+    doc = lxml.html.document_fromstring(f)
 
+    e = doc.xpath('//table[not(@class)]//th[text()="Catalog ID"]/../..')[0][:-1]
+    d = dict((t[0].text, t[1].text_content().strip()) for t in e)
+    e = doc.xpath('//table[not(@class)]//th[text()="PCB Class"]/../..')[0][:-1]
+    d['PCB Name'] = e[0][0].text_content()
+    d.update(dict((t[0].text, t[1].text_content().strip()) for t in e[2:]))
 
-    def build_dict_from_list(li):
-        if len(li) % 2:
-            li = li[:-1]
-        return dict((li[x].strip(),li[x+1].strip()) for x in xrange(0,len(li),2))
+    name = doc.xpath('//td[@class="headingsubtitle"]/text()')
 
-
-    pcb_info = build_dict_from_list(doc.xpath('//table[@id="tid_10"]//text()')[5:-1][0::2])
-    general_info = build_dict_from_list(doc.xpath('//table[@id="tid_5"]//text()')[0::2][:-1])
-    d = {}
-    if len(doc.xpath('//td[@class="headingsubtitle"]/text()')):
-        d['Original Title'] = doc.xpath('//td[@class="headingsubtitle"]/text()')[0].strip()
-    if len(doc.xpath('//td[@class="headingmain"]/text()')):
-        d['Romanized Title'] = doc.xpath('//td[@class="headingmain"]/text()')[0].strip()
-    d['PCB Name'] = doc.xpath('//table[@id="tid_10"]//text()')[:1][0].strip()
-    d.update(pcb_info)
-    d.update(general_info)
+    d['Original Title'] = name[0].strip() if len(name) > 0 else ""
+    d['Romanized Title'] = doc.xpath('//td[@class="headingmain"]/text()')[0].strip()
     return d
 
 
