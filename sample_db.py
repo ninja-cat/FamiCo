@@ -97,7 +97,7 @@ def get_group_from_catalog_id(cat_id):
         return "konami"
     elif re.match("BANDAI.*", cat_id):
         return "bandai"
-    elif re.match("TAITO.*", cat_id):
+    elif re.match("(TAITO|TFC-[^0-9]{2}).*", cat_id):
         return "taito"
     elif re.match("CAP-.*", cat_id):
         return "capcom"
