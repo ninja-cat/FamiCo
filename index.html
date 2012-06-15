@@ -64,9 +64,17 @@
                 create_list_from_checked_groups();
             }
 
+            function keys(obj){
+                var res = [];
+                for (var key in obj){
+                    res.push(key); 
+                } 
+                return res;
+            }
+
             function create_group_checkboxes(groups){
                 var inputs = $("ul#fami_tags").empty();
-                $.each(Object.keys(groups).sort(), function(idx, group){
+                $.each(keys(groups).sort(), function(idx, group){
                     var listItem = document.createElement("li");
                     var inputItem = document.createElement("input");
                     inputItem.type = "checkbox";
