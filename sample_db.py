@@ -117,6 +117,8 @@ def get_group_from_catalog_id(cat_id):
         return "technos"
     elif re.match("SFX-.*", cat_id):
         return "snk"
+    elif re.match("HBR", cat_id):
+        return "home brew repro"
     return "other"
 
 def correct_date_bootgod(s):
