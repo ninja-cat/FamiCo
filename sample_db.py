@@ -115,6 +115,8 @@ def get_group_from_catalog_id(cat_id):
         return "square"
     elif re.match("TJC-.*", cat_id):
         return "technos"
+    elif re.match("NAT-.*", cat_id):
+        return "natsume"
     elif re.match("SFX-.*", cat_id):
         return "snk"
     elif re.match("HBR", cat_id):
