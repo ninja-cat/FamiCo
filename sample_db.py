@@ -7,6 +7,7 @@ from datetime import datetime
 from uuid import uuid4
 import re
 import urllib
+from pprint import pprint
 
 import lxml.html
 
@@ -38,10 +39,6 @@ def get_all_info_from_profile(profile_id):
     d['Original Title'] = name[0].strip() if len(name) > 0 else ""
     d['Romanized Title'] = doc.xpath('//td[@class="headingmain"]/text()')[0].strip()
     return d
-
-
-def get_id():
-    return str(uuid4())
 
 
 def load_famicomworld_db(fname):
@@ -97,7 +94,7 @@ def get_group_from_catalog_id(cat_id):
         return "konami"
     elif re.match("BANDAI.*", cat_id):
         return "bandai"
-    elif re.match("(TAITO|TFC-[^0-9]{2}).*", cat_id):
+    elif re.match("(TAITO|TFC-[^0-9]{2}-).*", cat_id):
         return "taito"
     elif re.match("CAP-.*", cat_id):
         return "capcom"
@@ -122,6 +119,7 @@ def get_group_from_catalog_id(cat_id):
     elif re.match("HBR", cat_id):
         return "home brew repro"
     return "other"
+
 
 def correct_date_bootgod(s):
     s = s.replace(',','').strip()
@@ -151,13 +149,31 @@ def correct_date_bootgod(s):
     elif re.match("Dec.*", month):
         month = "12"
 
-    return "/".join((day if len(day) > 1 else "0" + day, month, year))
+    return "/".join(("%02i" % int(day), month, year))
+
+
+def cached(db, key1, key2=None):
+    for _, cart in db.iteritems():
+        if any((key1 == cart["catalog_id"],
+                key2 == cart["original_title"].encode('utf-8'),
+                cart["catalog_id"].startswith(key1),
+                cart["catalog_id"].endswith(key1),
+              )):
+            return True
+    return False
 
 
 if __name__ == "__main__":
 
     db = {}
+    cached_db = {}
 
+    try:
+        with open('db.json', 'rb') as f:
+            cached_db = json.loads(f.read())
+            print "cached items: %03d" % len(cached_db)
+    except (ValueError, IOError):
+        pass	
     csv_db = csv.reader(open('total.csv', 'rb'), delimiter=',', quotechar='"')
 
     fami_db = load_famicomworld_db('famicomworld.csv')
@@ -173,6 +189,11 @@ if __name__ == "__main__":
         #cart["timestamp"] = str(datetime.now().isoformat())
         cart["img"] = ""
         cart["group"] = get_group_from_catalog_id(cart["catalog_id"])
+	if cached(cached_db, cart['catalog_id'], cart['original_title']):
+            print "cached %s" % cart['catalog_id']
+            continue
+	else:
+            print "uncached %s" % cart['catalog_id']
         if cart["group"] in ("namco", "taito", "bandai", "sunsoft"):
             tmp = get_profile_id_at_bootgoddb(cart["original_title"])
         else:
@@ -201,6 +222,11 @@ if __name__ == "__main__":
                 cart["short_title"] = entry["name"].split(':')[0].split('!')[0].strip()
             if "publisher" in entry:
                 cart["publisher"] = entry["publisher"]
-        db[get_id()] = cart
+        db[str(uuid4())] = cart
         
-    print json.dumps(db)
+    print "%03d new carts added to cache:" % len(db)
+    pprint(db)
+    cached_db.update(db)
+    print "total: %03d carts" % len(cached_db)
+    with open('db.json', 'wb') as f:
+        f.write(json.dumps(cached_db))
