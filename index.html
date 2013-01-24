@@ -60,7 +60,7 @@
             }
 
             function check_all_groups(){
-                $("input","ul#fami_tags li").attr('checked',this.checked);
+                $("input","ul#fami_tags li").prop('checked',this.checked);
                 create_list_from_checked_groups();
             }
 
